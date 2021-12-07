@@ -6,19 +6,22 @@
 #    By: milmi <milmi@student.42.fr>                +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2019/11/10 00:43:14 by milmi             #+#    #+#              #
-#    Updated: 2021/11/15 06:06:37 by milmi            ###   ########.fr        #
+#    Updated: 2021/12/07 11:00:54 by milmi            ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME=philo
-SRCS = main.c
+SRCS = main.c utils.c
 FLAGS = -Wall -Wextra -Werror -g
-INCLUDES=./
+
 all: $(NAME)
+
 $(NAME):
 	gcc $(FLAGS) $(SRCS) -o $(NAME)
+	
 clean:
-
+	rm -rf philo.dSYM
 fclean: clean
 	rm -f $(NAME)
+
 re:	fclean all
