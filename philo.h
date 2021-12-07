@@ -7,7 +7,9 @@
 # include <sys/time.h>
 # include <pthread.h>
 
-
+typedef struct
+{
+}				t_philo;
 
 
 #endif
