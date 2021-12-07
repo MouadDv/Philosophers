@@ -6,7 +6,7 @@
 /*   By: milmi <milmi@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 10:39:22 by milmi             #+#    #+#             */
-/*   Updated: 2021/12/07 13:09:35 by milmi            ###   ########.fr       */
+/*   Updated: 2021/12/07 15:23:05 by milmi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 int	init_struct(t_philo *data, int argc, char **argv)
 {
 	data->ac = argc;
+	data->philodeath = 0;
 	data->n = ft_atoi(argv[1]);
 	if (data->n > 200 || data->n < 0)
 		return (0);
@@ -30,7 +31,7 @@ int	init_struct(t_philo *data, int argc, char **argv)
 	if (argc == 6)
 	{
 		data->n_t_p_e = ft_atoi(argv[5]);
-		if (data->n_t_p_e < 60)
+		if (data->n_t_p_e < 0)
 			return (0);
 	}
 	return (1);
@@ -46,12 +47,16 @@ void	*philosopher(void *arg)
 	if (stack.starttime == 0)
 		return (NULL);
 	stack.pid = data->pid;
+	stack.timeseat = 0;
 	while (1)
 	{
-		stack.starttime = get_time();
-		mysleep(70);
-		printf("%lld ==> %d\n", (get_time() - stack.starttime), stack.pid);
+		if (data->ac == 6 && stack.timeseat == data->n_t_p_e)
+			break ;
+		usleep(100);
+		eat(data, &stack);
 	}
+	usleep(1000);
+	data->status[stack.pid] = 1;
 	return (NULL);
 }
 
@@ -64,6 +69,14 @@ int	init_threads(t_philo *data)
 	if (!data->philos)
 		return (0);
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->n);
+	if (!data->forks)
+		return (0);
+	data->status = malloc(sizeof(int) * data->n);
+	if (!data->status)
+		return (0);
+	i = 0;
+	while (i++ < data->n)
+		data->status[i - 1] = 0;
 	while (i++ < data->n)
 		pthread_mutex_init(&(data->forks[i]), NULL);
 	pthread_mutex_init(&(data->wr_m), NULL);
@@ -75,9 +88,9 @@ int	init_threads(t_philo *data)
 		usleep(10);
 		i++;
 	}
-	i = 0;
-	while (i++ < data->n)
-		pthread_join(data->philos[i], NULL);
+	// i = 0;
+	// while (i++ < data->n)
+	// 	pthread_join(data->philos[i], NULL);
 	return (1);
 	
 }
@@ -85,6 +98,7 @@ int	init_threads(t_philo *data)
 int	main(int argc, char **argv)
 {
 	t_philo		*data;
+	int			i;
 
 	if (argc == 5 || argc == 6)
 	{
@@ -93,6 +107,21 @@ int	main(int argc, char **argv)
 			return (1);
 		if (!init_threads(data))
 			return (1);
+		while (1)
+		{
+			usleep(100);
+			if (data->philodeath)
+				return (0);
+			i = 0;
+			while (i < data->n)
+			{
+				if (data->status[i % data->n] == 0)
+					break ;
+				i++;
+			}
+			if (i == data->n)
+				return (0);
+		}
 	}
 	return (0);
 }

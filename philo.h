@@ -9,6 +9,7 @@
 
 typedef struct
 {
+	int					philodeath;
 	int					pid;
 	int					ac;
 	int					n;
@@ -16,6 +17,7 @@ typedef struct
 	int					t_e;
 	int					t_s;
 	int					n_t_p_e;
+	int					*status;
 	pthread_t			*philos;
 	pthread_mutex_t		*forks;
 	pthread_mutex_t		wr_m;
@@ -25,11 +27,13 @@ typedef struct
 {
 	int					pid;
 	long long			starttime;
+	int					timeseat;
 	
 }				t_stack;
 
 int			ft_atoi(const char *str);
 long long	get_time(void);
 void		mysleep(long long time);
+void		eat(t_philo *data, t_stack *stack);
 
 #endif
