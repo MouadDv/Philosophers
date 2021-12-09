@@ -6,7 +6,7 @@
 /*   By: milmi <milmi@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 10:39:22 by milmi             #+#    #+#             */
-/*   Updated: 2021/12/09 21:48:18 by milmi            ###   ########.fr       */
+/*   Updated: 2021/12/10 00:56:36 by milmi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -66,6 +66,9 @@ int	init_threads(t_philo *data)
 	data->starttime = malloc(sizeof(long long) * data->n);
 	if (!data->starttime)
 		return (0);
+	i = -1;
+	while (++i < data->n)
+		data->starttime[i] = __LONG_MAX__;
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->n);
 	if (!data->forks)
 		return (0);
@@ -81,7 +84,7 @@ int	init_threads(t_philo *data)
 	{
 		data->pid = i;
 		pthread_create(&(data->philos[i]), NULL, philosopher, data);
-		usleep(10);
+		usleep(100);
 		i++;
 	}
 	return (1);
@@ -92,6 +95,7 @@ void	mythreadjoin(t_philo *data)
 	int	i;
 	long long time;
 
+	usleep(50000);
 	while (1)
 	{
 		i = -1;
@@ -111,7 +115,7 @@ void	mythreadjoin(t_philo *data)
 			if ((data->ac == 6 && data->timeseat[i] < data->n_t_p_e) || data->ac == 5)
 			{
 				time = get_time();
-				if ((time - data->starttime[i]) / 1000 >= (data->t_d))
+				if ((time - data->starttime[i]) >= (data->t_d) * 1000)
 				{
 					pthread_mutex_lock(&(data->wr_m));
 					printf("%lld %d died\n", time / 1000, i + 1);
