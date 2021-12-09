@@ -6,7 +6,7 @@
 /*   By: milmi <milmi@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 10:39:22 by milmi             #+#    #+#             */
-/*   Updated: 2021/12/07 15:23:05 by milmi            ###   ########.fr       */
+/*   Updated: 2021/12/09 01:15:46 by milmi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,24 +39,19 @@ int	init_struct(t_philo *data, int argc, char **argv)
 
 void	*philosopher(void *arg)
 {
-	t_stack	stack;
+	int		pid;
 	t_philo *data;
 
 	data = (t_philo *)arg;
-	stack.starttime = get_time();
-	if (stack.starttime == 0)
+	pid = data->pid;
+	data->starttime[pid] = get_time();
+	if (data->starttime[pid] == 0)
 		return (NULL);
-	stack.pid = data->pid;
-	stack.timeseat = 0;
+	data->timeseat[pid] = 0;
 	while (1)
 	{
-		if (data->ac == 6 && stack.timeseat == data->n_t_p_e)
-			break ;
-		usleep(100);
-		eat(data, &stack);
+		eat(data, pid);
 	}
-	usleep(1000);
-	data->status[stack.pid] = 1;
 	return (NULL);
 }
 
@@ -68,17 +63,18 @@ int	init_threads(t_philo *data)
 	data->philos = malloc(sizeof(pthread_t) * data->n);
 	if (!data->philos)
 		return (0);
+	data->starttime = malloc(sizeof(long long) * data->n);
+	if (!data->starttime)
+		return (0);
 	data->forks = malloc(sizeof(pthread_mutex_t) * data->n);
 	if (!data->forks)
 		return (0);
-	data->status = malloc(sizeof(int) * data->n);
-	if (!data->status)
+	data->timeseat = malloc(sizeof(int) * data->n);
+	if (!data->timeseat)
 		return (0);
 	i = 0;
 	while (i++ < data->n)
-		data->status[i - 1] = 0;
-	while (i++ < data->n)
-		pthread_mutex_init(&(data->forks[i]), NULL);
+		pthread_mutex_init(&(data->forks[i - 1]), NULL);
 	pthread_mutex_init(&(data->wr_m), NULL);
 	i = 0;
 	while (i < data->n)
@@ -88,17 +84,44 @@ int	init_threads(t_philo *data)
 		usleep(10);
 		i++;
 	}
-	// i = 0;
-	// while (i++ < data->n)
-	// 	pthread_join(data->philos[i], NULL);
 	return (1);
-	
+}
+
+void	mythreadjoin(t_philo *data)
+{
+	int	i;
+	long long time;
+
+	while (1)
+	{
+		i = -1;
+		while (++i < data->n)
+		{
+			if (data->timeseat[i] != data->n_t_p_e)
+				break ;
+		}
+		if (i == data->n)
+			return ;
+		i = -1;
+		while (++i < data->n)
+		{
+			if ((data->ac == 6 && data->timeseat[i] < data->n_t_p_e) || data->ac == 5)
+			{
+				time = get_time();
+				if ((time - data->starttime[i]) / 1000 >= (data->t_d))
+				{
+					pthread_mutex_lock(&(data->wr_m));
+					printf("%lld %d - %lld - %lld - %lld - %lld - died\n", time / 1000, i + 1, (time - data->starttime[i]) / 1000, time, data->starttime[i], data->t_d * 1000);
+					return ;
+				}
+			}
+		}
+	}
 }
 
 int	main(int argc, char **argv)
 {
 	t_philo		*data;
-	int			i;
 
 	if (argc == 5 || argc == 6)
 	{
@@ -107,21 +130,8 @@ int	main(int argc, char **argv)
 			return (1);
 		if (!init_threads(data))
 			return (1);
-		while (1)
-		{
-			usleep(100);
-			if (data->philodeath)
-				return (0);
-			i = 0;
-			while (i < data->n)
-			{
-				if (data->status[i % data->n] == 0)
-					break ;
-				i++;
-			}
-			if (i == data->n)
-				return (0);
-		}
+		mythreadjoin(data);
+		freealloc(data);
 	}
 	return (0);
 }
