@@ -13,8 +13,8 @@ void	eat(t_philo *data, int pid)
 	pthread_mutex_lock(&(data->forks[(pid + 1) % data->n]));
 	print(data, pid, "has taken a fork");
 	print(data, pid, "is eating");
-	mysleep(data->t_e);
 	data->timeseat[pid]++;
+	mysleep(data->t_e);
 	data->starttime[pid] = get_time();
 	pthread_mutex_unlock(&(data->forks[pid]));
 	pthread_mutex_unlock(&(data->forks[(pid + 1) % data->n]));

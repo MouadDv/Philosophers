@@ -6,7 +6,7 @@
 /*   By: milmi <milmi@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 10:39:22 by milmi             #+#    #+#             */
-/*   Updated: 2021/12/09 01:15:46 by milmi            ###   ########.fr       */
+/*   Updated: 2021/12/09 21:48:18 by milmi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -95,13 +95,16 @@ void	mythreadjoin(t_philo *data)
 	while (1)
 	{
 		i = -1;
-		while (++i < data->n)
+		if (data->ac == 6)
 		{
-			if (data->timeseat[i] != data->n_t_p_e)
-				break ;
+			while (++i < data->n)
+			{
+				if (data->timeseat[i] != data->n_t_p_e)
+					break ;
+			}
+			if (i == data->n)
+				return ;
 		}
-		if (i == data->n)
-			return ;
 		i = -1;
 		while (++i < data->n)
 		{
@@ -111,7 +114,7 @@ void	mythreadjoin(t_philo *data)
 				if ((time - data->starttime[i]) / 1000 >= (data->t_d))
 				{
 					pthread_mutex_lock(&(data->wr_m));
-					printf("%lld %d - %lld - %lld - %lld - %lld - died\n", time / 1000, i + 1, (time - data->starttime[i]) / 1000, time, data->starttime[i], data->t_d * 1000);
+					printf("%lld %d died\n", time / 1000, i + 1);
 					return ;
 				}
 			}
