@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   philo.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: milmi <milmi@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/07 10:39:22 by milmi             #+#    #+#             */
+/*   Updated: 2021/12/12 01:16:26 by milmi            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 void	print(t_philo *data, int pid, char *str)
@@ -7,15 +19,15 @@ void	print(t_philo *data, int pid, char *str)
 	pthread_mutex_unlock(&(data->wr_m));
 }
 
-void	eat(t_philo *data, int pid)
+void	eat_sleep_think(t_philo *data, int pid)
 {
 	pthread_mutex_lock(&(data->forks[pid]));
 	pthread_mutex_lock(&(data->forks[(pid + 1) % data->n]));
 	print(data, pid, "has taken a fork");
 	print(data, pid, "is eating");
 	data->timeseat[pid]++;
-	mysleep(data->t_e);
 	data->starttime[pid] = get_time();
+	mysleep(data->t_e);
 	pthread_mutex_unlock(&(data->forks[pid]));
 	pthread_mutex_unlock(&(data->forks[(pid + 1) % data->n]));
 	print(data, pid, "is sleeping");

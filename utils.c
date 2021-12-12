@@ -1,3 +1,15 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   utils.c                                            :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: milmi <milmi@student.42.fr>                +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2021/12/07 10:39:22 by milmi             #+#    #+#             */
+/*   Updated: 2021/12/12 01:37:29 by milmi            ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "philo.h"
 
 long long	get_time(void)
@@ -17,7 +29,10 @@ void	mysleep(long long time)
 	curr = get_time();
 	r = time - 60;
 	usleep(r * 1000);
-	while (get_time() - curr < time * 1000);
+	while (get_time() - curr < time * 1000)
+	{
+		continue ;
+	}
 }
 
 int	ft_atoi(const char *str)
@@ -46,4 +61,20 @@ int	ft_atoi(const char *str)
 		j++;
 	}
 	return (c * f);
+}
+
+int	supervisor1(t_philo *data)
+{
+	int		i;
+
+	i = 0;
+	while (i < data->n)
+	{
+		if (data->timeseat[i] < data->n_t_p_e)
+			break ;
+		i++;
+	}
+	if (i == data->n)
+		return (1);
+	return (0);
 }
