@@ -6,7 +6,7 @@
 /*   By: milmi <milmi@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 10:39:22 by milmi             #+#    #+#             */
-/*   Updated: 2021/12/12 01:16:26 by milmi            ###   ########.fr       */
+/*   Updated: 2021/12/13 00:14:42 by milmi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@ void	print(t_philo *data, int pid, char *str)
 void	eat_sleep_think(t_philo *data, int pid)
 {
 	pthread_mutex_lock(&(data->forks[pid]));
+	print(data, pid, "has taken a fork");
 	pthread_mutex_lock(&(data->forks[(pid + 1) % data->n]));
 	print(data, pid, "has taken a fork");
 	print(data, pid, "is eating");

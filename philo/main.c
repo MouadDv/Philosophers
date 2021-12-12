@@ -6,7 +6,7 @@
 /*   By: milmi <milmi@student.42.fr>                +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2021/12/07 10:39:22 by milmi             #+#    #+#             */
-/*   Updated: 2021/12/12 02:04:57 by milmi            ###   ########.fr       */
+/*   Updated: 2021/12/13 00:12:46 by milmi            ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -67,10 +67,10 @@ int	init_threads(t_philo *data, int i)
 	data->timeseat = malloc(sizeof(int) * data->n);
 	if (!data->timeseat)
 		return (0);
-	i = 0;
-	while (i++ < data->n)
+	i = -1;
+	while (++i < data->n)
 	{
-		if (pthread_mutex_init(&(data->forks[i - 1]), NULL) != 0)
+		if (pthread_mutex_init(&(data->forks[i]), NULL) != 0)
 			return (0);
 	}
 	if (pthread_mutex_init(&(data->wr_m), NULL))
